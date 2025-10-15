@@ -1,0 +1,15 @@
+.bh-input {
+  box-sizing: border-box;
+  background-color: var(--c-input);
+  color: var(--c-text1);
+  border-radius: 6px;
+  padding: 4px;
+  outline: none;
+  border: none;
+  font-size: 16px;
+  font-family: barlow-regular;
+}
+
+.bh-input::placeholder {
+    color: var(--c-text0);
+}

@@ -1,0 +1,49 @@
+table.bh-table {
+  border-collapse: separate;
+  border-spacing: 0px 3px;
+  font-family: barlow-regular;
+
+  th, td {
+    background-color: var(--c-sf0);
+    padding: 2px 12px 2px 12px;
+
+  }
+
+  th {
+    color: var(--c-text0);
+    text-align: left;
+  }
+
+  td {
+    color: var(--c-text1);
+    border-bottom: 1px solid transparent;
+  }
+
+  a:hover {
+    color: var(--c-text3);
+  }
+
+  tr.link {
+    cursor: pointer;
+  }
+
+  tr.link:hover td {
+    border-color: var(--c-text0);
+  }
+
+  .yellow {
+    color: var(--c-text-yellow);
+  }
+
+  .green {
+    color: var(--c-text-green);
+  }
+
+  .red {
+    color: var(--c-text-red);
+  }
+
+  .purple {
+    color: var(--c-text-purple);
+  }
+}

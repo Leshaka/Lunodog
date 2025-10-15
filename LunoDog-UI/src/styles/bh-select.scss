@@ -1,0 +1,19 @@
+.bh-select {
+  font-family: barlow-regular;
+  font-size: 16px;
+  color: var(--c-text1);
+  background-color: var(--c-input);
+  //border: 1px solid var(--c-sf2);
+  border: none;
+  border-radius: 6px;
+  padding: 4px;
+  //text-align: center;
+
+  option {
+    font-family: barlow-regular;
+    font-size: 14px;
+    color: var(--c-text1);
+    background-color: var(--c-input);
+    border-color: var(--c-sf2);
+  }
+}

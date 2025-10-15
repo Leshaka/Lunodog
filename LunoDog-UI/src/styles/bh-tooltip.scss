@@ -1,0 +1,11 @@
+.bh-tooltip {
+  visibility: hidden;
+  background-color: var(--c-input);
+  color: var(--c-text1);
+  border-radius: 6px;
+  padding: 6px;
+  white-space: pre;
+  
+  position: absolute;
+  z-index: 1;
+}

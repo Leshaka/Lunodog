@@ -1,0 +1,67 @@
+body {
+  all: initial;
+  background-color: var(--c-sf0);
+
+  * {
+    margin: unset;
+    padding: unset;
+  }
+}
+
+path {
+  box-sizing: content-box;
+}
+
+u {
+  text-decoration: underline;
+}
+
+a {
+  text-decoration: none;
+  color: unset;
+  cursor: pointer;
+}
+
+small {
+  all: unset;
+}
+
+strong {
+  all: unset;
+}
+
+img {
+  display: block;
+}
+
+.fg-yellow {
+  color: var(--c-text-yellow) !important;
+}
+
+.fg-green {
+  color: var(--c-text-green) !important;
+}
+
+.fg-red {
+  color: var(--c-text-red) !important;
+}
+
+.fg-purple {
+  color: var(--c-text-purple) !important;
+}
+
+.bg-yellow {
+  background-color: var(--c-text-yellow) !important;
+}
+
+.bg-green {
+  background-color: var(--c-text-green) !important;
+}
+
+.bg-red {
+  background-color: var(--c-text-red) !important;
+}
+
+.bg-purple {
+  background-color: var(--c-text-purple) !important;
+}
