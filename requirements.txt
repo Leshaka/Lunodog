@@ -1,0 +1,8 @@
+uvloop
+aiomysql
+aiohttp
+aiohttp_middlewares
+nextcore
+discord_typings
+prettytable
+GeoIP
