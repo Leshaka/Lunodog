@@ -6,7 +6,7 @@
         <CellText :updateKey="updateKey" :Value="row.emoji" :rowId="index" Name="emoji" @update:value="setValue"/>
         <CellDiscordObj :Value="row.role" Placeholder="Select a role" :Options="guild.roles" :rowId="index" Name="role" @update:value="setValue"/>
         <CellText :updateKey="updateKey" :Value="row.comment" :rowId="index" Name="comment" @update:value="setValue"/>
-        <td class="delete"><img src="/img/admin/delete.png" @click="deleteRow(index)"/></td>
+        <td class="delete"><img src="/img/icons/admin/delete.png" @click="deleteRow(index)"/></td>
       </tr>
       <tr v-if="pendingRows.length == 0"><td class="empty" :colspan="Object.keys(blankRow).length+1">table is empty</td></tr>
     </template>

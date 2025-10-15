@@ -6,7 +6,7 @@
         <CellBool :Value="row.post_videos" :rowId="index" Name="videos" @update:value="setValue"/>
         <CellBool :Value="row.post_shorts" :rowId="index" Name="videos" @update:value="setValue"/>
         <CellBool :Value="row.post_broadcasts" :rowId="index" Name="broadcasts" @update:value="setValue"/>
-        <td class="delete"><img src="/img/admin/delete.png" @click="deleteRow(index)"/></td>
+        <td class="delete"><img src="/img/icons/admin/delete.png" @click="deleteRow(index)"/></td>
       </tr>
       <tr v-if="pendingRows.length == 0"><td class="empty" :colspan="Object.keys(blankRow).length+1">table is empty</td></tr>
     </template>

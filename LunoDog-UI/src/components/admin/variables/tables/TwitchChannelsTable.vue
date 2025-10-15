@@ -5,7 +5,7 @@
         <CellText :updateKey="updateKey" :Value="row.channel" :rowId="index" Name="channel" @update:value="setValue"/>
         <CellText :updateKey="updateKey" :Value="row.allowed_games" :rowId="index" Name="allowed_games" @update:value="setValue"/>
         <CellText :updateKey="updateKey" :Value="row.message_text" :rowId="index" Name="message_text" @update:value="setValue"/>
-        <td class="delete"><img src="/img/admin/delete.png" @click="deleteRow(index)"/></td>
+        <td class="delete"><img src="/img/icons/admin/delete.png" @click="deleteRow(index)"/></td>
       </tr>
       <tr v-if="pendingRows.length == 0"><td class="empty" :colspan="Object.keys(blankRow).length+1">table is empty</td></tr>
     </template>
