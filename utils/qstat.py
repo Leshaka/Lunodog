@@ -34,7 +34,10 @@ async def query_master(address: str, port: int, timeout: int = 5) -> list[tuple]
         remote_addr=(address, port)
     )
     transport.sendto(b'\xff\xff\xff\xffgetservers 68 empty full\x00', (address, port))
-    packets = await protocol.recv_many(eot=b'EOT\x00\x00\x00', timeout=timeout)
+    try:
+        packets = await protocol.recv_many(eot=b'EOT\x00\x00\x00', timeout=timeout)
+    finally:
+        transport.close()
 
     servers = []
     for data in packets:
@@ -59,8 +62,10 @@ async def query_server(address: str, port: int, timeout: int = 5) -> dict | None
         remote_addr=(address, port)
     )
     transport.sendto(b'\xff\xff\xff\xffgetstatus\x00', (address, port))
-    packet = await protocol.recv_one(timeout=timeout)
-    transport.close()
+    try:
+        packet = await protocol.recv_one(timeout=timeout)
+    finally:
+        transport.close()
 
     data = packet.strip().split(b'\n')
     if data[0] != b'\xff\xff\xff\xffstatusResponse':

@@ -74,11 +74,14 @@ async def query_servers(servers: dict[tuple[str, int], str | None], m_servers: l
 
 
 @bot.slash_command('qstat', expensive=True)
-async def do_qstat(sci: SlashCommandInteraction):
+async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
     if not sci.guild.cfg.qstat_enable:
         raise errors.BotPermissionError('The /qstat command is turned off on this server.')
 
-    m_servers = [(host_to_ip(i['host']), i['port']) for i in sci.guild.cfg.qstat_master_servers]
+    if not fast:
+        m_servers = [(host_to_ip(i['host']), i['port']) for i in sci.guild.cfg.qstat_master_servers]
+    else:
+        m_servers = []
     hosts = {(host_to_ip(i['host']), i['port']): i['host'] for i in sci.guild.cfg.qstat_servers}
 
     servers = []

@@ -117,7 +117,15 @@ SLASH_COMMANDS: list[dict] = [
     },
     {  # modules/qstat
         'name': 'qstat',
-        'description': 'Query game servers'
+        'description': 'Query game servers',
+        'options': [
+            {
+                'name': 'fast',
+                'type': OptionType.BOOLEAN,
+                'description': 'Do not query master servers',
+                'required': False
+            }
+        ]
     },
     {  # modules/isolator
         'name': 'isolator',
