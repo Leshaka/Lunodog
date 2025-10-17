@@ -1,4 +1,7 @@
+import logging
+
 BOT_OWNER_IDS = ['your-discord-user-id']
+BOT_LOGGING_LEVEL = logging.INFO
 
 DC_BOT_TOKEN = ''
 DC_APPLICATION_ID = ''

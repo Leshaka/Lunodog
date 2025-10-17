@@ -5,7 +5,7 @@
     <div v-if="isLoaded" id="server-list">
       <div v-for="g in guilds" class="server-entry">
         <div class="icon-container">
-          <img :src="`https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png?size=128`"/>
+          <img v-if="g.icon" :src="`https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png?size=128`"/>
         </div>
         <div class="bottom">
           <div class="left">

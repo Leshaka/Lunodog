@@ -92,6 +92,10 @@ async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
             if any((srv.get(key) != filt[key] for key in filt.keys())):
                 continue
 
+        # frick this one
+        if srv['address'] == '138.2.130.215':
+            continue
+
         srv['players'] = srv['players'] or []
         # convert players list into a readable string
         srv['p_string'] = ', '.join([

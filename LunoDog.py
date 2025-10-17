@@ -3,6 +3,7 @@ import asyncio
 import logging
 import time
 
+from config import BOT_LOGGING_LEVEL
 from cli import CLILoggingHandler
 
 
@@ -12,7 +13,7 @@ def run_here(command: str):
 
 # Have to initialize logger before importing modules if we want logging on start-up (registered commands, etc)
 cli = CLILoggingHandler(runner=run_here)
-logging.basicConfig(level=logging.DEBUG, handlers=[cli])
+logging.basicConfig(level=BOT_LOGGING_LEVEL, handlers=[cli])
 
 from bot import bot
 from db import db
