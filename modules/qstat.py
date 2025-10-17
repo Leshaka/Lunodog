@@ -2,14 +2,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import json
-import asyncio
 import GeoIP
 import re
 import socket
 from logging import getLogger
 
-from common import escape_markdown
-from libs.PromodeQuerier import PromodeQuerier
+from common import escape_markdown, gather_with_pool
+from utils import qstat
 from bot import bot, errors
 
 
@@ -35,7 +34,7 @@ def host_to_ip(host: str) -> str:
 
 async def query_with_hostname(hostname: str, address: str, port: int, timeout: int = 5):
     """ Adds _hostname key to PromodeQuerier.queryServerAsync() data """
-    res = await PromodeQuerier.queryServerAsync(address, port, timeout=timeout)
+    res = await qstat.query_server(address, port, timeout=timeout)
     if res is not None:
         res['_hostname'] = hostname
     return res
@@ -50,26 +49,36 @@ async def query_servers(servers: dict[tuple[str, int], str | None], m_servers: l
          List of servers data from PromodeQuerier.queryServerAsync() with additional '_hostname' field.
     """
 
-    for resp in await asyncio.gather(*[PromodeQuerier.queryMasterAsync(*i) for i in m_servers]):
-        logger.warning(resp)
+    ignore_exceptions = (TimeoutError, ValueError, IndexError)
+    do_query_masters = gather_with_pool(
+        tasks=(qstat.query_master(*i, timeout=2) for i in m_servers),
+        pool_size=min([5, len(m_servers)]),
+        ignore_exceptions=ignore_exceptions
+    )
+    for resp in await do_query_masters:
         if resp:
             for srv in resp:
                 if srv not in servers:
                     servers[srv] = None
 
     res = []
-    for server in await asyncio.gather(*[query_with_hostname(v, *k) for k, v in servers.items()]):
+    do_query_servers = gather_with_pool(
+        tasks=(query_with_hostname(v, *k, timeout=1) for k, v in servers.items()),
+        pool_size=min([50, len(servers)]),
+        ignore_exceptions=ignore_exceptions
+    )
+    for server in await do_query_servers:
         if server is not None:
             res.append(server)
     return res
 
 
 @bot.slash_command('qstat', expensive=True)
-async def qstat(sci: SlashCommandInteraction):
+async def do_qstat(sci: SlashCommandInteraction):
     if not sci.guild.cfg.qstat_enable:
         raise errors.BotPermissionError('The /qstat command is turned off on this server.')
 
-    m_servers = [(i['host'], i['port']) for i in sci.guild.cfg.qstat_master_servers]
+    m_servers = [(host_to_ip(i['host']), i['port']) for i in sci.guild.cfg.qstat_master_servers]
     hosts = {(host_to_ip(i['host']), i['port']): i['host'] for i in sci.guild.cfg.qstat_servers}
 
     servers = []
@@ -117,3 +126,4 @@ async def qstat(sci: SlashCommandInteraction):
         (sci.guild.cfg.qstat_string or DEFAULT_QSTAT_STRING).format(**i)
         for i in servers[:10]
     ]))
+

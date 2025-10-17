@@ -1,6 +1,7 @@
 import random
 import re
-from typing import Iterable, Callable
+from typing import Iterable, Callable, Awaitable
+from asyncio import gather as a_gather
 from prettytable import PrettyTable
 
 
@@ -186,3 +187,25 @@ def parse_duration(string):
     else:
         raise ValueError()
     return int(duration)
+
+
+async def gather_with_pool(tasks: Iterable[Awaitable], pool_size: int = 10, ignore_exceptions: iter = None) -> list:
+    """ asyncio.gather but with limited amount of concurrent tasks """
+    tasks = iter(tasks)
+    res = []
+
+    async def _do_next_task():
+        while True:
+            try:
+                t = tasks.__next__()
+            except StopIteration:
+                break
+
+            try:
+                res.append(await t)
+            except ignore_exceptions or ():
+                pass
+
+    await a_gather(*(_do_next_task() for _ in range(pool_size)))
+    return res
+
