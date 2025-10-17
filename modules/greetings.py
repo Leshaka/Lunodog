@@ -19,7 +19,7 @@ async def _send_message(channel_id: str, content: str):
 @bot.event_dispatcher.listen('GUILD_MEMBER_ADD')
 async def on_member_add(data: GuildMemberAddData):
     counter = await db.select_one('greetings', {'guild_id': data['guild_id'], 'user_id': data['user']['id']})
-    counter = counter or {'guild_id': data['guild_id', 'user_id': data['user']['id'], 'visit_count': 0]}
+    counter = counter or {'guild_id': data['guild_id'], 'user_id': data['user']['id'], 'visit_count': 0}
     counter['visit_count'] += 1
     await db.insert('greetings', counter, on_conflict='replace')
 
@@ -51,7 +51,7 @@ async def on_member_remove(data: GuildMemberRemoveData):
         return
 
     counter = await db.select_one('greetings', {'guild_id': data['guild_id'], 'user_id': data['user']['id']})
-    counter = counter or {'guild_id': data['guild_id', 'user_id': data['user']['id'], 'visit_count': 0]}
+    counter = counter or {'guild_id': data['guild_id'], 'user_id': data['user']['id'], 'visit_count': 0}
     if counter['visit_count'] > 1 and guild.cfg.greetings_goodbye_again_message:
         await _send_message(
             guild.cfg.greetings_goodbye_channel,

@@ -23,7 +23,7 @@ class GuildConfig(Config):
         info_library=ListVar(
             variables=dict(
                 entry=StrVar(notnull=True, min_length=1, max_length=64),
-                content=StrVar(notnull=False),
+                content=StrVar(notnull=False, max_length=2048),
                 embed=StrVar(notnull=False, max_length=2048),
                 ephemeral=BoolVar(default=False)
             ),
@@ -212,7 +212,7 @@ class Guild(DiscordObject):
     def delete_role(self, role_id: str):
         self.roles.pop(role_id)
         self.admin_roles.discard(role_id)
-        for m in filter(lambda i: role_id in i.roles, self.members):
+        for m in filter(lambda i: role_id in i.roles, self.members.values()):
             m.roles.remove(role_id)
 
     def delete_channel(self, channel_id: str):
