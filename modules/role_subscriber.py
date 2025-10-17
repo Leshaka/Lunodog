@@ -70,7 +70,7 @@ async def on_reaction_remove(data: MessageReactionRemoveData):
             logger.error(f'Missing permissions to remove role {role_id} from {member.id}: {e}')
 
 
-@bot.slash_command('role subscribe')
+@bot.slash_command('role subscribe', ephemeral=True)
 async def subscribe_role(sci: SlashCommandInteraction, subscription_name: str):
     if not sci.guild.cfg.rs_enable:  # skip if module turned off
         raise errors.BotPermissionError('Role subscriber is disabled on this server.')
@@ -91,7 +91,7 @@ async def subscribe_role(sci: SlashCommandInteraction, subscription_name: str):
     await sci.reply(f'Added `{len(roles_to_add)}` roles.', color=Colors.GREEN)
 
 
-@bot.slash_command('role unsubscribe')
+@bot.slash_command('role unsubscribe', ephemeral=True)
 async def unsubscribe_role(sci: SlashCommandInteraction, subscription_name: str):
     if not sci.guild.cfg.rs_enable:  # skip if module turned off
         raise errors.BotPermissionError('Role subscriber is disabled on this server.')

@@ -82,7 +82,7 @@ async def on_reaction_remove(data: MessageReactionRemoveData):
             'user_id': data['user_id'],
             'message_id': data['message_id'],
             # delete either by emoji_id if exists or by emoji name
-            **({'emoji_id': emoji_id} if emoji_id is not None else {'emoji_name': data['emoji']['name']})
+            **({'emoji_id': emoji_id} if emoji_id is not None else {'emoji': data['emoji']['name']})
         }
     )
 
