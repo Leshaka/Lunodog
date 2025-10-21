@@ -127,6 +127,18 @@ SLASH_COMMANDS: list[dict] = [
             }
         ]
     },
+    {
+        'name': 'servers',
+        'description': 'Query game servers',
+        'options': [
+            {
+                'name': 'fast',
+                'type': OptionType.BOOLEAN,
+                'description': 'Do not query master servers',
+                'required': False
+            }
+        ]
+    },
     {  # modules/isolator
         'name': 'isolator',
         'description': 'Manage the isolation ward.',

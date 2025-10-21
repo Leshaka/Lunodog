@@ -128,7 +128,6 @@ async def inject_flag_icons(guild: Guild, servers: list[dict]):
         i['flag_icon'] = f':flag_{country_code.lower()}:' if country_code else ':grey_question:'
 
 
-@bot.slash_command('qstat', expensive=True)
 async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
     if not sci.guild.cfg.qstat_enable:
         raise errors.BotPermissionError('The /qstat command is turned off on this server.')
@@ -184,3 +183,6 @@ async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
         ) for i in servers
     ]))
 
+
+bot.slash_command('qstat', expensive=True)(do_qstat)
+bot.slash_command('servers', expensive=True)(do_qstat)
