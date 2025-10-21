@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from logging import getLogger
+from aiohttp.web_exceptions import HTTPNotFound
 
 from config import BOT_OWNER_IDS
 from bot import DiscordObject, Channel, Thread, Role, Member, MemberPresence
@@ -240,3 +241,13 @@ class Guild(DiscordObject):
         )) or member.id == self.owner_id or member.id in BOT_OWNER_IDS:
             return True
         return False
+
+    async def fetch_member(self, user_id: str) -> Member | None:
+        """ Get existing from self.members or fetch from discord API and save to self.members """
+        if (member := self.members.get(user_id)) is not None:
+            return member
+        try:
+            self.members[user_id] = Member.from_api(await self.bot.api_get(f'/guilds/{self.id}/members/{user_id}'))
+            return self.members[user_id]
+        except HTTPNotFound:
+            return None

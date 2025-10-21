@@ -134,9 +134,7 @@ async def on_bot_close():
 
 @bot.slash_command('profile')
 async def show_member_profile(sci: SlashCommandInteraction, user: str):
-    if (target := sci.guild.members.get(user)) is None:
-        raise errors.BotNotFoundError('Server member not found.')
-
+    target = sci.get_resolved_member(user)
     now = int(time())
     at_after = now-60*60*24*30
     messages_cnt = (await db.fetch_one(

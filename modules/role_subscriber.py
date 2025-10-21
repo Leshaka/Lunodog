@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from logging import getLogger
 from nextcore.http.errors import ForbiddenError
 
-from bot import bot
+from bot import bot, Member
 from bot import errors
 from common import Colors
 
@@ -20,10 +20,8 @@ async def on_reaction_add(data: MessageReactionAddData):  # skip DMs
         return
     if not guild.cfg.rs_enable:  # skip if module turned off
         return
-    if (member := guild.members.get(data['user_id'])) is None:
-        logger.error(f"Guild member is not found for MESSAGE_REACTION_ADD: {guild.id} {data['user_id']}")
-        return
 
+    member = Member.from_api(data['member'])
     roles_to_add = set((
         row['role'] for row in guild.cfg.rs_emojis
         if (
@@ -48,8 +46,8 @@ async def on_reaction_remove(data: MessageReactionRemoveData):
         return
     if not guild.cfg.rs_enable:  # skip if module turned off
         return
-    if (member := guild.members.get(data['user_id'])) is None:
-        logger.error(f"Guild member is not found for MESSAGE_REACTION_ADD: {guild.id} {data['user_id']}")
+    if (member := await guild.fetch_member(data['user_id'])) is None:
+        logger.warning(f"Guild member is not found for MESSAGE_REACTION_REMOVE: {guild.id} {data['user_id']}")
         return
 
     roles_to_remove = set((

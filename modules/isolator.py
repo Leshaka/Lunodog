@@ -22,7 +22,7 @@ LAST_ISOLATOR_CHECK = time()
 
 
 async def _add_roles(guild: Guild, user_id: int | str, isolated: bool, muted: bool):
-    if (member := guild.members.get(str(user_id))) is None:
+    if (member := await guild.fetch_member(str(user_id))) is None:
         return
     if isolated and guild.cfg.isolator_role and guild.cfg.isolator_role not in member.roles:
         try:
@@ -37,7 +37,7 @@ async def _add_roles(guild: Guild, user_id: int | str, isolated: bool, muted: bo
 
 
 async def _remove_roles(guild: Guild, user_id: int | str, isolated: bool, muted: bool):
-    if (member := guild.members.get(str(user_id))) is None:
+    if (member := await guild.fetch_member(str(user_id))) is None:
         return
     if not isolated and guild.cfg.isolator_role and guild.cfg.isolator_role in member.roles:
         try:
@@ -65,7 +65,7 @@ async def isolate(sci: SlashCommandInteraction, user: str, duration: str, reason
 
     # Get prisoner data
     if (mention := re.match(r"^<@!?(\d+)>$", user)) is not None:
-        if (member := sci.guild.members.get(mention.group(1))) is None:
+        if (member := await sci.guild.fetch_member(mention.group(1))) is None:
             raise BotNotFoundError('Server member not found. Use user_id:username mask for missing members.')
     elif (user_mask := re.match(r"(\d+):(.*)", user)) is not None:
         member = FakeMember(user_id=user_mask.group(1), username=user_mask.group(2))

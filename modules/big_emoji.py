@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from common import find
-from bot import bot
+from bot import bot, Member
 from bot.errors import BotNotFoundError
 
 if TYPE_CHECKING:
@@ -30,6 +30,7 @@ async def autocomplete_emoji(sai: SlashAutocompleteInteraction) -> list[dict]:
 
 @bot.slash_command('avatar')
 async def show_avatar(sci: SlashCommandInteraction, user: str):
-    if (target := sci.guild.members.get(user)) is None or not target.avatar:
+    target = sci.get_resolved_member(user)
+    if not target.avatar:
         raise BotNotFoundError('Not found.')
     await sci.reply_raw(embeds=[{"image": {'url': f'https://cdn.discordapp.com/avatars/{target.id}/{target.avatar}.webp'}}])
