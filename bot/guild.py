@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from logging import getLogger
-from aiohttp.web_exceptions import HTTPNotFound
+from nextcore.http.errors import NotFoundError
 
 from config import BOT_OWNER_IDS
 from bot import DiscordObject, Channel, Thread, Role, Member, MemberPresence
@@ -250,5 +250,5 @@ class Guild(DiscordObject):
         try:
             self.members[user_id] = Member.from_api(await self.bot.api_get(f'/guilds/{self.id}/members/{user_id}'))
             return self.members[user_id]
-        except HTTPNotFound:
+        except NotFoundError:
             return None
