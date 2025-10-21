@@ -31,6 +31,7 @@ export default {
           };
           this.editMode = 'table';
           this.pendingJsonError = false;
+          this.commitRows();
         } catch (error) {
           console.log(error);
           this.pendingJsonError = true
