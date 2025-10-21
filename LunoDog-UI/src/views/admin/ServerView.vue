@@ -138,6 +138,7 @@ export default {
   align-items: stretch;
   height: 100vh;
   background-color: unset;
+  min-width: max-content;
 }
 
 #loader-container {

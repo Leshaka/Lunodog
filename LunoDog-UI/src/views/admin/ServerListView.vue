@@ -1,6 +1,7 @@
 <template>
-  <BHHeader :path="[{'name': 'Admin'}, {'name': 'Servers'}]"/>
   <div id="page-container">
+  <BHHeader :path="[{'name': 'Admin'}, {'name': 'Servers'}]"/>
+  <div id="content-container">
     <div id="title"><span>Select a server</span></div>
     <div v-if="isLoaded" id="server-list">
       <div v-for="g in guilds" class="server-entry">
@@ -19,6 +20,7 @@
     <div v-else class="bh-loader big"></div>
 
     <a :href="$inviteURL" target="_blank"><BHButton class="new-server" iconLeft="/img/misc/discord-mark-white.png" text="Add new server" large/></a>
+  </div>
   </div>
 </template>
 
@@ -57,6 +59,9 @@ export default {
 
 <style lang="scss" scoped>
 #page-container {
+  min-width: max-content;
+}
+#content-container {
   display: flex;
   flex-direction: column;
   align-items: center;
