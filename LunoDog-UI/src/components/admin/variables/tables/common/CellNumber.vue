@@ -1,5 +1,5 @@
 <template>
-  <td class="editable" contenteditable="true" @input="$emit('update:value', this.rowId, this.Name, Number($event.target.innerText))">{{ Value === null ? '' : Value}}</td>
+  <td class="editable" contenteditable="true" @input="$emit('update:value', this.rowId, this.Name, Number($event.target.innerText))">{{ value}}</td>
 </template>
 
 <script>
@@ -17,11 +17,11 @@ export default {
     }
   },
   mounted() {
-    this.value = this.Value;
+    this.value = this.Value === null ? '' : this.Value;
   },
   watch: {
     updateKey() {
-      this.value = this.Value;
+      this.value = this.Value === null ? '' : this.Value;
     }
   }
 };
