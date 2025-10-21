@@ -194,7 +194,7 @@ async def get_user_guilds(oauth_user: dict) -> list[Guild]:
 async def get_user(api_token: str) -> dict:
     """ Return oauth_user data for an api_token or raise an exception """
     if (oauth_user := await db.select_one('oauth_user', {'api_token': api_token})) is None:
-        raise ApiError(400, 'API error', 'Bad api_token.')
+        raise ApiError(401, 'API error', 'Bad api_token.')
     return oauth_user
 
 
