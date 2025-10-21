@@ -41,6 +41,11 @@ class SlashCommandInteraction:
         self.author = Member.from_api(self.data['member'])
         self.callback = self.bot.slash_commands.get(self.name)
 
+    def get_resolved_member(self, user_id: str) -> Member:
+        m_data = self.data['data']['resolved']['members'][user_id]
+        m_data['user'] = self.data['data']['resolved']['users'][user_id]
+        return Member.from_api(m_data)
+
     def parse_slash_command_options(self) -> tuple[str, dict]:
         """ Parse slash command interaction options return full command name and options as kwargs """
         cmd_name = self.data['data']['name']

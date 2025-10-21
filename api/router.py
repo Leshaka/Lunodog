@@ -54,7 +54,7 @@ class ApiRoute:
                 kwargs['oauth_user'] = await self.get_oauth_user(request)
 
             if self.member or self.only_admin:
-                member = self.get_member(
+                member = await self.fetch_member(
                     oauth_user=kwargs.get('oauth_user'),
                     guild_id=kwargs.get('guild_id')
                 )
@@ -98,11 +98,11 @@ class ApiRoute:
         return await oauth.get_user(api_token)
 
     @staticmethod
-    def get_member(oauth_user: dict, guild_id: str = None) -> Member:
+    async def fetch_member(oauth_user: dict, guild_id: str = None) -> Member:
         if guild_id is None or not guild_id.isdigit():
             raise ApiError(400, 'Bad request', 'Server parameter is bad or missing.')
         if (guild := bot.guilds.get(guild_id)) is None:
             raise ApiError(400, 'Bad request', f'Server with id {guild_id} is not reachable.')
-        if (member := guild.members.get(str(oauth_user['user_id']))) is None:
+        if (member := await guild.fetch_member(str(oauth_user['user_id']))) is None:
             raise ApiError(403, 'Missing permissions', 'Must be member of the guild.')
         return member
