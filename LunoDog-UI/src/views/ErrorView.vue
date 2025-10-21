@@ -1,8 +1,14 @@
 <template>
   <div class="layout">
-    <div class="title"> {{ errorStore.title }} </div>
-    <div class="body"> {{ errorStore.body }} </div>
-    <BHButton @click="$router.back()" text="Go back"/>
+    <div class="error-message">
+      <div class="title"> {{ errorStore.title }} </div>
+      <div class="body"> {{ errorStore.body }} </div>
+      <div class="buttons">
+        <a @click="$router.back()" text="Go back"></a>
+        |
+        <a @click="$router.push('/')" text="Front page"></a>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -28,13 +34,21 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 100%;
+  min-height: 100vh;
+}
+
+.error-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: 32px;
   color: var(--c-text0);
   font-size: 20px;
   font-family: "barlow-medium";
 
-  min-width: 100%;
-  min-height: 100vh;
+
 
   .title {
     color: var(--c-text-red);
@@ -45,6 +59,17 @@ export default {
   .body {
     white-space: pre;
   }
+
+  .buttons {
+    align-self: flex-end;
+    display: flex;
+    gap: 16px;
+    color: var(--c-sf2);
+    a:hover {
+      color: var(--c-text0);
+    }
+  }
+
 }
 
 
