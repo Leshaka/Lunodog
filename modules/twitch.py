@@ -35,14 +35,12 @@ async def _fetch_twitch_url(url: str) -> dict:
     global TOKEN
 
     async def _fetch() -> dict:
-        logger.debug(f'fetching url {url}')
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 url,
                 headers={'client-id': TWITCH_CLIENT_ID, 'Authorization': 'Bearer ' + TOKEN},
                 raise_for_status=True
             ) as r:
-                logger.debug(f'status code is {r.status}')
                 return (await r.json())['data']
 
     if not TOKEN:
@@ -62,7 +60,6 @@ async def _fetch_twitch_streams(*user_names: str) -> list[dict]:
     streams = await _fetch_twitch_url(
         STREAMS_URL.format(channels="&".join(('user_login=' + name for name in user_names)))
     )
-    logger.warning(streams)
     if not len(streams):
         return []
 
@@ -144,7 +141,6 @@ async def twitch_think(frame_time: float):
 
 
 async def twitch_poll():
-    logger.warning('Polling twitch...')
     now = int(time())
 
     # Get all twitch user_names to fetch streams for
