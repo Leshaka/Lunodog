@@ -37,7 +37,7 @@ export default {
     '\n{gameversion} - version of the mod' +
     '\n{p_string} - list of connected players',
     qstatStringDefault: '> {flag_icon} [**{numclients}**/{sv_maxclients}] [**{mode_current}**] {mapname} `/connect {host}` | `{name}`@***{gameversion}*** : {p_string}',
-    sortbyOptions: ['host', 'country', 'numclients', 'host'],
+    sortbyOptions: ['host', 'numclients'],
     qstatFilterDefault: '{"gamename": "cpma"}'
   }},
 

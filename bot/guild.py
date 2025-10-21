@@ -70,6 +70,7 @@ class GuildConfig(Config):
             variables=dict(
                 host=StrVar(notnull=True),
                 port=IntVar(notnull=True),
+                flag=StrVar(),
                 comment=StrVar()
             )
         ),

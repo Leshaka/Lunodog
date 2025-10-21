@@ -5,6 +5,10 @@ import json
 import GeoIP
 import re
 import socket
+import aiohttp
+from time import time
+from collections import defaultdict
+from string import Formatter
 from logging import getLogger
 
 from common import escape_markdown, gather_with_pool
@@ -13,12 +17,15 @@ from bot import bot, errors
 
 
 if TYPE_CHECKING:
-    from bot import SlashCommandInteraction
+    from bot import SlashCommandInteraction, Guild
 
 
 logger = getLogger(__name__)
+formatter = Formatter()
 geoip = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
 DEFAULT_QSTAT_STRING = "{flag_icon} [**{modname}**] {mapname} {private_icon}`/connect {host}` | `{name}`: `{p_string}`"
+IP_API_CACHE: dict[str, str] = dict()
+IP_API_LAST_REQUESTS: list[float] = []
 
 
 def host_to_ip(host: str) -> str:
@@ -73,6 +80,54 @@ async def query_servers(servers: dict[tuple[str, int], str | None], m_servers: l
     return res
 
 
+async def inject_flag_icons(guild: Guild, servers: list[dict]):
+    """
+    Adds 'flag_icon' field to servers (list of qstat.query_server responses).
+    This method has multiple fallbacks:
+        - use custom flag icon string from guild config if set
+        - use cached flag icon from ip-api.com database if exists
+        - fetch missing flag icons from ip-api.com if we are not hitting the api limits (15 per minute)
+        - get missing flag icons from local GeoIP database as last fallback
+    """
+    global IP_API_LAST_REQUESTS
+
+    # get custom flag icons from guild config or local ip-api.com cache
+    custom_icons = {i['host']: i['flag'] for i in guild.cfg.qstat_servers if i['flag'] not in (None, '')}
+    for i in servers:
+        i['flag_icon'] = custom_icons.get(i['_hostname']) or IP_API_CACHE.get(i['address'])
+
+    missing = [i for i in servers if i.get('flag_icon') is None]
+    if not len(missing):
+        return
+
+    # fetch flags from ip-api.com
+    if len(IP_API_LAST_REQUESTS) < 15 or IP_API_LAST_REQUESTS[14] < time()-55:
+        logger.debug('Fetching flags from ip-api.com...')
+        payload = list(set((i['address'] for i in missing)))
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post('http://ip-api.com/batch?countryCode', json=payload) as response:
+                    data = await response.json()
+        except Exception as e:
+            logger.error(f"Failed to fetch data from ip-api.com: {e}.")
+        else:
+            for n in range(len(payload)):
+                IP_API_CACHE[payload[n]] = ':flag_' + data[n]['countryCode'].lower() + ':'
+            for i in missing:
+                i['flag_icon'] = IP_API_CACHE[i['address']]
+            return
+        finally:
+            IP_API_LAST_REQUESTS.insert(0, time())
+            IP_API_LAST_REQUESTS = IP_API_LAST_REQUESTS[:15]
+    else:
+        logger.warning('Reached api limits for ip-api.com.')
+
+    logger.warning('Using local GeoIP database.')
+    for i in missing:
+        country_code = geoip.country_code_by_addr(i['address'])
+        i['flag_icon'] = f':flag_{country_code.lower()}:' if country_code else ':grey_question:'
+
+
 @bot.slash_command('qstat', expensive=True)
 async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
     if not sci.guild.cfg.qstat_enable:
@@ -109,16 +164,7 @@ async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
         if len(srv['players']) >= srv.get('sv_maxclients', 100) and not sci.guild.qstat_show_full:
             continue
 
-        # finish with server preparations
-        flag = geoip.country_code_by_addr(srv['address'])
-        if flag:
-            srv['country'] = flag
-            flag = ":flag_{0}:".format(flag.lower())
-        else:
-            flag = ":grey_question:"
-
         srv['private_icon'] = "🔒" if srv.get('g_needpass') else ' '
-        srv['flag_icon'] = flag
         srv['name'] = re.sub(r"\^[^ ]", '', srv['sv_hostname'])
         srv['modname'] = srv.get('game') or srv.get('gamename') or ' '
         srv['numclients'] = len(srv['players'])
@@ -128,9 +174,13 @@ async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
     if not len(servers):
         raise errors.BotNotFoundError('No servers to display.')
 
-    servers = sorted(servers, key=lambda i: i.get(sci.guild.cfg.qstat_sortby))
+    servers = sorted(servers, key=lambda i: i.get(sci.guild.cfg.qstat_sortby))[:10]
+    await inject_flag_icons(sci.guild, servers)
     await sci.reply_raw(content='\n'.join([
-        (sci.guild.cfg.qstat_string or DEFAULT_QSTAT_STRING).format(**i)
-        for i in servers[:10]
+        formatter.vformat(
+            sci.guild.cfg.qstat_string or DEFAULT_QSTAT_STRING,
+            (),
+            defaultdict(lambda: '-', i)
+        ) for i in servers
     ]))
 
