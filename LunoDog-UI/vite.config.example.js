@@ -10,14 +10,15 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig({
   server: {
     host: '127.0.0.1',
-    port: 3355,
-    https: {
-      key: fs.readFileSync('../certs/private.key'),
-      cert: fs.readFileSync('../certs/lunodog.crt'),
-    },
+    port: 3356,
+    // if you want https
+    //https: {
+    //  key: fs.readFileSync('../certs/private.key'),
+    //  cert: fs.readFileSync('../certs/lunodog.crt'),
+    //},
   },
   plugins: [
-    basicSsl(),
+    //basicSsl(),
     vue(),
     vueDevTools(),
   ],

@@ -24,13 +24,13 @@ MYSQL_USER = 'db-user'
 MYSQL_PASS = 'db-password'
 
 API_HOST = '127.0.0.1'  # listen on this host (0.0.0.0 for any)
-API_PORT = 4300
-API_SSL_CERT = 'certs/lunodog.crt'
-API_SSL_KEY = 'certs/private.key'
+API_PORT = 3355
+API_SSL_CERT = None  # set a path to your SSL certificate to enable https
+API_SSL_KEY = None  # path to your SSL certificate private key
 API_NO_AUTH = False  # if you don't want to set up oauth, grants access to all api routes without auth
 API_OAUTH_SCOPES = ['identify', 'guilds']
-API_OAUTH_REDIRECT_URI = 'http://127.0.0.1:3355/oauth'  # web ui URL/oauth
-API_CORS_ORIGINS = ('http://127.0.0.1:3355',)  # the web ui URL, where api requests will be coming from
+API_OAUTH_REDIRECT_URI = 'http://127.0.0.1:3356/oauth'  # web ui URL/oauth
+API_CORS_ORIGINS = ('http://127.0.0.1:3356',)  # the web ui URL, where api requests will be coming from
 
 TWITCH_CLIENT_ID = ''
 TWITCH_CLIENT_SECRET = ''

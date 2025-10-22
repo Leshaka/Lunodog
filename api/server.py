@@ -17,11 +17,13 @@ class ApiServer:
         middlewares=[cors_middleware(origins=config.API_CORS_ORIGINS, allow_credentials=True, allow_headers=DEFAULT_ALLOW_HEADERS + ("X-Client-UID",), allow_methods=("GET", "POST", "PATCH", "OPTIONS", "HEAD"))]
     )
     runner = web.AppRunner(app)
-    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-    context.load_cert_chain(
-        certfile=config.API_SSL_CERT,
-        keyfile=config.API_SSL_KEY
-    )
+    context = None
+    if config.API_SSL_CERT:
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        context.load_cert_chain(
+            certfile=config.API_SSL_CERT,
+            keyfile=config.API_SSL_KEY
+        )
 
     @classmethod
     async def start(cls):
