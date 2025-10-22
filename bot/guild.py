@@ -212,16 +212,17 @@ class Guild(DiscordObject):
         self.roles[role_data['id']] = Role(role_data)
 
     def delete_role(self, role_id: str):
-        self.roles.pop(role_id)
         self.admin_roles.discard(role_id)
         for m in filter(lambda i: role_id in i.roles, self.members.values()):
             m.roles.remove(role_id)
+        self.roles.pop(role_id)
 
     def delete_channel(self, channel_id: str):
         self.channels.pop(channel_id)
 
     def delete_member(self, member_id: str):
-        self.members.pop(member_id)
+        if member_id in self.members:
+            self.members.pop(member_id)
         if member_id in self.presences:
             self.presences.pop(member_id)
 
