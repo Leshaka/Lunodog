@@ -149,7 +149,7 @@ def refresh_user(coro):
         return new_oauth_user
 
     async def wrapper(oauth_user: dict, *args, **kwargs):
-        if oauth_user['expires_at'] < time():
+        if oauth_user['user_id'] != 0 and oauth_user['expires_at'] < time():
             oauth_user = await _update_user(oauth_user)
         return await coro(oauth_user, *args, **kwargs)
 

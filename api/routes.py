@@ -59,9 +59,6 @@ async def get_my_guilds(request: Request, oauth_user: dict):
 
 @ApiRoute('/config/get', method='GET', get_member=True)
 async def get_guild_config(request: Request, oauth_user: dict, guild: Guild, member: Member):
-    if not guild.is_admin(member):
-        raise ApiError(code=403, message="You are missing privileges to edit the configuration.")
-
     return api_success({
         'id': str(guild.id),
         'icon': guild.icon,
@@ -73,11 +70,8 @@ async def get_guild_config(request: Request, oauth_user: dict, guild: Guild, mem
     })
 
 
-@ApiRoute('/config/update', method='POST', get_member=True)
+@ApiRoute('/config/update', method='POST', get_member=True, admin_route=True)
 async def update_guild_config(request: Request, oauth_user: dict, guild: Guild, member: Member, cfg: dict):
-    if not guild.is_admin(member):
-        raise ApiError(code=403, message="You are missing privileges to edit the configuration.")
-
     errors = guild.cfg.validate(guild, cfg)
     if len(errors):
         message = 'Bad values for variables:\n'

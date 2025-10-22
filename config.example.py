@@ -1,6 +1,6 @@
 import logging
 
-BOT_OWNER_IDS = ['your-discord-user-id']
+BOT_OWNER_IDS = ['0', 'your-discord-user-id']  # keep '0', it is a system account for API_NO_AUTH=True
 BOT_LOGGING_LEVEL = logging.INFO
 
 DC_BOT_TOKEN = ''
@@ -27,9 +27,10 @@ API_HOST = '127.0.0.1'  # listen on this host (0.0.0.0 for any)
 API_PORT = 4300
 API_SSL_CERT = 'certs/lunodog.crt'
 API_SSL_KEY = 'certs/private.key'
+API_NO_AUTH = False  # if you don't want to set up oauth, grants access to all api routes without auth
 API_OAUTH_SCOPES = ['identify', 'guilds']
-API_CORS_ORIGINS = ('http://127.0.0.1:3355',)  # web ui URL
 API_OAUTH_REDIRECT_URI = 'http://127.0.0.1:3355/oauth'  # web ui URL/oauth
+API_CORS_ORIGINS = ('http://127.0.0.1:3355',)  # the web ui URL, where api requests will be coming from
 
 TWITCH_CLIENT_ID = ''
 TWITCH_CLIENT_SECRET = ''

@@ -3,7 +3,8 @@ from aiohttp import web
 import traceback
 import json
 
-from bot import bot, Member
+from config import API_NO_AUTH, BOT_OWNER_IDS
+from bot import bot, Guild, Member, FakeMember
 from . import ApiServer, oauth, ApiError
 
 logger = logging.getLogger(__name__)
@@ -22,12 +23,14 @@ class ApiRoute:
         Handle unexpected exceptions.
     """
 
-    def __init__(self, path, method='GET', auth=False, get_member=False, only_admin=False):
+    AdminFakeMember = FakeMember(user_id='0', username='admin')
+
+    def __init__(self, path, method='GET', auth=False, get_member=False, admin_route=False):
         self.path = path
         self.method = method
-        self.auth = auth or get_member or only_admin
+        self.auth = auth or get_member or admin_route
         self.member = get_member
-        self.only_admin = only_admin
+        self.admin_route = admin_route
 
     def __call__(self, coro):
         async def decorator(request):
@@ -35,8 +38,6 @@ class ApiRoute:
 
         logger.info(f"API| registering route /api{self.path}")
         ApiServer.app.router.add_route(self.method, '/api' + self.path, decorator)
-        #if self.method == 'POST': # TODO
-        #    ApiServer.app.router.add_options('/api' + self.path, decorator)
         return decorator
 
     # Main function
@@ -53,17 +54,16 @@ class ApiRoute:
             if self.auth:
                 kwargs['oauth_user'] = await self.get_oauth_user(request)
 
-            if self.member or self.only_admin:
-                member = await self.fetch_member(
+            if self.member or self.admin_route:
+                guild, member = await self.fetch_member(
                     oauth_user=kwargs.get('oauth_user'),
                     guild_id=kwargs.get('guild_id')
                 )
-                if self.only_admin and not member.guild_permissions.administrator:  # TODO
+                kwargs['guild'] = guild
+                kwargs['member'] = member
+                kwargs.pop('guild_id')
+                if self.admin_route and not guild.is_admin(member):
                     raise ApiError(403, 'Missing permissions', 'Must possess guild administrator permissions.')
-                if self.member:
-                    kwargs['member'] = member
-                    kwargs['guild'] = bot.guilds.get(kwargs['guild_id'])
-                    kwargs.pop('guild_id')
 
             logger.info(f"Running {coro.__name__}...")
             return await coro(request, **kwargs)
@@ -93,16 +93,23 @@ class ApiRoute:
 
     @staticmethod
     async def get_oauth_user(request) -> dict:
+        if API_NO_AUTH:
+            return {'user_id': 0, 'username': 'admin', 'discriminator': 0, 'avatar': None}
         if (api_token := request.cookies.get('api_token')) is None:
             raise ApiError(401, 'Not authorized', 'api_token is missing.')
         return await oauth.get_user(api_token)
 
     @staticmethod
-    async def fetch_member(oauth_user: dict, guild_id: str = None) -> Member:
+    async def fetch_member(oauth_user: dict, guild_id: str = None) -> tuple[Guild, Member]:
         if guild_id is None or not guild_id.isdigit():
             raise ApiError(400, 'Bad request', 'Server parameter is bad or missing.')
         if (guild := bot.guilds.get(guild_id)) is None:
             raise ApiError(400, 'Bad request', f'Server with id {guild_id} is not reachable.')
-        if (member := await guild.fetch_member(str(oauth_user['user_id']))) is None:
-            raise ApiError(403, 'Missing permissions', 'Must be member of the guild.')
-        return member
+
+        if oauth_user['user_id'] == 0:
+            return guild, ApiRoute.AdminFakeMember
+        if (member := await guild.fetch_member(str(oauth_user['user_id']))) is not None:
+            return guild, member
+        if str(oauth_user['user_id']) in BOT_OWNER_IDS:
+            return guild, ApiRoute.AdminFakeMember
+        raise ApiError(403, 'Missing permissions', 'Must be member of the guild.')

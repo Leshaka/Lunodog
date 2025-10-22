@@ -66,7 +66,6 @@ class Member(DiscordObject):
         self.avatar = avatar
         self.fake = fake
         self.roles = roles
-        self.status = None  # Unfortunately this is not provided with Member or User data
 
     def __repr__(self):
         return f'<Member {self.username} id={self.id}>'
@@ -106,9 +105,6 @@ class Member(DiscordObject):
         self.global_name = data['user']['global_name']
         self.display_name = data['nick'] or self.display_name
         self.roles = data['roles']
-
-    def set_status(self, status: str):
-        self.status = status
 
     def __eq__(self, other):
         return self.id == other.id
