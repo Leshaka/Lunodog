@@ -4,6 +4,7 @@
       <tr v-for="(row, index) in pendingRows">
         <CellText :updateKey="updateKey" :Value="row.host" :rowId="index" Name="host" @update:value="setValue"/>
         <CellNumber :updateKey="updateKey" :Value="row.port" :rowId="index" Name="port" @update:value="setValue"/>
+        <CellText :updateKey="updateKey" :Value="row.game_protocol" :rowId="index" Name="game_protocol" @update:value="setValue"/>
         <CellText :updateKey="updateKey" :Value="row.comment" :rowId="index" Name="comment" @update:value="setValue"/>
         <td class="delete"><img src="/img/icons/admin/delete.png" @click="deleteRow(index)"/></td>
       </tr>
@@ -34,8 +35,8 @@ export default {
     return {
       Name: 'qstat_master_servers',
       Display: 'Master server list',
-      columnNames: ['Host', 'Port', 'Comment'],
-      blankRow: {'host': '', 'port': 27950, 'comment': ''}
+      columnNames: ['Host', 'Port', 'Game protocol', 'Comment'],
+      blankRow: {'host': '', 'port': 27950, 'game_protocol': '68', 'comment': ''}
     }
   }
 }

@@ -64,6 +64,7 @@ class GuildConfig(Config):
             variables=dict(
                 host=StrVar(notnull=True),
                 port=IntVar(notnull=True),
+                game_protocol=StrVar(notnull=True),
                 comment=StrVar()
             )
         ),

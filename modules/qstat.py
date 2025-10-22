@@ -47,7 +47,7 @@ async def query_with_hostname(hostname: str, address: str, port: int, timeout: i
     return res
 
 
-async def query_servers(servers: dict[tuple[str, int], str | None], m_servers: list[tuple[str, int]]) -> list[dict]:
+async def query_servers(servers: dict[tuple[str, int], str | None], m_servers: list[tuple[str, int, str]]) -> list[dict]:
     """ Query master servers first, then query combined list of provided servers with master servers server list
     Args:
         servers: A dictionary with {(ip_address, port): hostname} data. Hostname can be None in case there is no hostname.
@@ -133,7 +133,7 @@ async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
         raise errors.BotPermissionError('The /qstat command is turned off on this server.')
 
     if not fast:
-        m_servers = [(host_to_ip(i['host']), i['port']) for i in sci.guild.cfg.qstat_master_servers]
+        m_servers = [(host_to_ip(i['host']), i['port'], i['game_protocol']) for i in sci.guild.cfg.qstat_master_servers]
     else:
         m_servers = []
     hosts = {(host_to_ip(i['host']), i['port']): i['host'] for i in sci.guild.cfg.qstat_servers}

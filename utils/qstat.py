@@ -27,13 +27,13 @@ class UDPClientProtocol(asyncio.DatagramProtocol):
         return await asyncio.wait_for(self.recvq.get(), timeout=timeout)
 
 
-async def query_master(address: str, port: int, timeout: int = 5) -> list[tuple]:
+async def query_master(address: str, port: int, game_protocol: str = '68',  timeout: int = 5) -> list[tuple]:
     loop = asyncio.get_running_loop()
     transport, protocol = await loop.create_datagram_endpoint(
         lambda: UDPClientProtocol(),
         remote_addr=(address, port)
     )
-    transport.sendto(b'\xff\xff\xff\xffgetservers 68 empty full\x00', (address, port))
+    transport.sendto(b'\xff\xff\xff\xffgetservers '+ game_protocol.encode() + b' empty full\x00', (address, port))
     try:
         packets = await protocol.recv_many(eot=b'EOT\x00\x00\x00', timeout=timeout)
     finally:
