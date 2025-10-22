@@ -1,7 +1,7 @@
 <template>  
   <div id="about-container">
     <div id="about-header">
-      <a href="https://github.com/Leshaka/lunodog-bot" target="_blank">GitHub</a>
+      <a href="https://github.com/Leshaka/lunodog" target="_blank">GitHub</a>
       <a href="https://discord.gg/nUEscwptgP" target="_blank">#promode.ru</a>
     </div>
     <div id="about-center">
