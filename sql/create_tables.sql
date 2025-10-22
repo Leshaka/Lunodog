@@ -63,7 +63,8 @@ CREATE TABLE `mbr_stats_presence` (
 CREATE TABLE `mbr_stats_last_logoff` (
     `guild_id` BIGINT(20) UNSIGNED NOT NULL,
     `user_id` BIGINT(20) UNSIGNED NOT NULL,
-    `at` BIGINT(20) UNSIGNED NOT NULL
+    `at` BIGINT(20) UNSIGNED NOT NULL,
+    PRIMARY KEY (`guild_id`, `user_id`)
 );
 
 CREATE TABLE `isolator` (
