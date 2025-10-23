@@ -80,7 +80,6 @@ async def query_server(address: str, port: int, timeout: int = 5) -> dict | None
         server_info[opts[i].decode()] = value
 
     server_info['players'] = []
-    print(data[2:])
     for p_data in data[2:]:
         ping, score, rest = p_data.split(b' ', maxsplit=2)
         rest = rest.split(b'" ', maxsplit=1)
