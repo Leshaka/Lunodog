@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 logger = getLogger(__name__)
 formatter = Formatter()
 geoip = GeoIP.new(GeoIP.GEOIP_MEMORY_CACHE)
-DEFAULT_QSTAT_STRING = "{flag_icon} [**{gamename}**] {mapname}`/connect {host}`{private_icon}| `{name}`: `{p_string}`"
+DEFAULT_QSTAT_STRING = "> {flag_icon} [**{numclients}**/{sv_maxclients}] [**{modname}**] {mapname} `/connect {host}`{private_icon}| `{name}` : {p_string}"
 IP_API_CACHE: dict[str, str] = dict()
 IP_API_LAST_REQUESTS: list[float] = []
 
@@ -164,7 +164,7 @@ async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
             continue
 
         srv['private_icon'] = " 🔒 " if srv.get('g_needpass') else ' '
-        srv['name'] = re.sub(r"\^[^ ]", '', srv.get('sv_hostname') or srv.get('tv_name') or '')
+        srv['name'] = re.sub(r"\^[^ ]", '', srv.get('sv_hostname') or srv.get('tv_name') or srv.get('hostname') or '')
         srv['modname'] = srv.get('game') or srv.get('gamename') or '-'
         srv['host'] = f"{srv['_hostname'] or srv['address']}:{srv['port']}"
         servers.append(srv)

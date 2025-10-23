@@ -33,12 +33,13 @@ export default {
     '\n\nSpecial server tags (provided by the bot):' +
     '\n  {flag_icon} - server country flag emoji, custom flag icons can be set in the server list' +
     '\n  {private_icon} - conditional lock emoji if the server is private, empty space if not' +
+    '\n  {modname} - name of the game' +
     '\n  {name} - formatted server name' +
     '\n  {host} - address:port to connect to, this will use hostnames from the server list below' +
     '\n  {numclients} - number of connected players, minus bots if possible' +
     '\n  {p_string} - formatted list of connected players' +
     '\n\nYou can check your game/mod specific server tags at https://dpmaster.deathmask.net',
-    qstatStringDefault: '{flag_icon} [**{gamename}**] {mapname}`/connect {host}`{private_icon}| `{name}`: `{p_string}`',
+    qstatStringDefault: '> {flag_icon} [**{numclients}**/{sv_maxclients}] [**{modname}**] {mapname} `/connect {host}`{private_icon}| `{name}` : {p_string}',
     sortbyOptions: ['numclients', 'host'],
     qstatFilterDefault: '{"gamename": "cpma"}',
     qstatFilterDescription: 'Json string in format {server_tag: value} to filter results with, value can be null to ensure the server tag is not present.' +
