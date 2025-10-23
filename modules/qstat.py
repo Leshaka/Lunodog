@@ -164,9 +164,9 @@ async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
             continue
 
         srv['private_icon'] = "🔒" if srv.get('g_needpass') else ' '
-        srv['name'] = re.sub(r"\^[^ ]", '', srv['sv_hostname'])
+        srv['name'] = re.sub(r"\^[^ ]", '', srv.get('sv_hostname') or srv.get('tv_name') or '')
         srv['modname'] = srv.get('game') or srv.get('gamename') or ' '
-        srv['numclients'] = len(srv['players'])
+        srv['numclients'] = len(srv['players']) - (srv.get('bots') or 0)
         srv['host'] = f"{srv['_hostname'] or srv['address']}:{srv['port']}"
         servers.append(srv)
 

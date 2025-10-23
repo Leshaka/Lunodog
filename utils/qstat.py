@@ -80,14 +80,18 @@ async def query_server(address: str, port: int, timeout: int = 5) -> dict | None
         server_info[opts[i].decode()] = value
 
     server_info['players'] = []
+    print(data[2:])
     for p_data in data[2:]:
-        ping, score, name = p_data.split(b' ', maxsplit=2)
-        raw_name = name.strip(b'"').decode()
+        ping, score, rest = p_data.split(b' ', maxsplit=2)
+        rest = rest.split(b'" ', maxsplit=1)
+        raw_name = rest[0].strip(b'"').decode()
+        team = int(rest[1]) if len(rest) > 1 else None
         server_info['players'].append({
             'ping': int(ping),
             'score': int(score),
-            'raw_name': name.strip(b'"').decode(),
-            'name': re.sub(r'\^.', '', raw_name)
+            'raw_name': raw_name,
+            'name': re.sub(r'\^.', '', raw_name),
+            'team': team
         })
     return server_info
 
