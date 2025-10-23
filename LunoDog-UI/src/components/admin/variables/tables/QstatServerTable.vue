@@ -1,5 +1,5 @@
 <template>
-  <TableBase :Display="Display" :editMode="editMode" :isEdited="isEdited" :columnNames="columnNames" @addRow="addRow" @setMode="setMode" @commitRows="commitRows">
+  <TableBase :Display="Display" :Description :editMode="editMode" :isEdited="isEdited" :columnNames="columnNames" @addRow="addRow" @setMode="setMode" @commitRows="commitRows">
     <template v-if="editMode=='table'" #rows>
       <tr v-for="(row, index) in pendingRows">
         <CellText :updateKey="updateKey" :Value="row.host" :rowId="index" Name="host" @update:value="setValue"/>
@@ -35,6 +35,7 @@ export default {
     return {
       Name: 'qstat_servers',
       Display: 'Server list',
+      Description: 'List of custom servers to query, this is like favorites in game server browser.',
       columnNames: ['Host', 'Port', 'Flag', 'Comment'],
       blankRow: {'host': '', 'port': 27960, 'flag': '', 'comment': ''},
     }

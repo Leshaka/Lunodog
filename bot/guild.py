@@ -58,7 +58,7 @@ class GuildConfig(Config):
         qstat_string=StrVar(),
         qstat_show_empty=BoolVar(default=False),
         qstat_show_full=BoolVar(default=True),
-        qstat_sortby=StrVar(default='host', notnull=True),
+        qstat_sortby=StrVar(default='numclients', notnull=True),
         qstat_filter=StrVar(default='{"gamename": "cpma"}'),
         qstat_master_servers=ListVar(
             variables=dict(

@@ -100,12 +100,13 @@ def do_cli():
     parser = argparse.ArgumentParser(description='Query quake servers.')
     parser.add_argument('-q3m', help='query Quake III Arena ♂master♂ server', metavar='address:port')
     parser.add_argument('-q3s', help='query Quake III Arena server', metavar='address:port')
+    parser.add_argument('-p', help='specify game protocol string', metavar='protocol', default='68')
     args = parser.parse_args()
 
     if args.q3m:
         address, port = args.q3m.split(':')
         print(f'Querying ♂master♂ server {address}:{port}...')
-        res = asyncio.run(query_master(address, int(port)))
+        res = asyncio.run(query_master(address, int(port), args.p))
         for address, port in res:
             print(f'{address}:{port}')
         print('------------------------')
