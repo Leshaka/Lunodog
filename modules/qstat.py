@@ -157,23 +157,24 @@ async def do_qstat(sci: SlashCommandInteraction, fast: bool = None):
             for i in srv['players']
         ]) if len(srv['players']) else 'no players'
 
-        if len(srv['players']) == 0 and not sci.guild.cfg.qstat_show_empty:
+        srv['numclients'] = len(srv['players']) - (srv.get('bots') or 0)
+        if srv['numclients'] == 0 and not sci.guild.cfg.qstat_show_empty:
             continue
 
-        if len(srv['players']) >= srv.get('sv_maxclients', 100) and not sci.guild.qstat_show_full:
+        if srv['numclients'] >= srv.get('sv_maxclients', 100) and not sci.guild.qstat_show_full:
             continue
 
         srv['private_icon'] = "🔒" if srv.get('g_needpass') else ' '
         srv['name'] = re.sub(r"\^[^ ]", '', srv.get('sv_hostname') or srv.get('tv_name') or '')
         srv['modname'] = srv.get('game') or srv.get('gamename') or ' '
-        srv['numclients'] = len(srv['players']) - (srv.get('bots') or 0)
         srv['host'] = f"{srv['_hostname'] or srv['address']}:{srv['port']}"
         servers.append(srv)
 
     if not len(servers):
         raise errors.BotNotFoundError('No servers to display.')
 
-    servers = sorted(servers, key=lambda i: i.get(sci.guild.cfg.qstat_sortby))[:10]
+    reverse_sort = True if sci.guild.cfg.qstat_sortby == 'numclients' else False
+    servers = sorted(servers, key=lambda i: i.get(sci.guild.cfg.qstat_sortby), reverse=reverse_sort)[:10]
     await inject_flag_icons(sci.guild, servers)
     await sci.reply_raw(content='\n'.join([
         formatter.vformat(
