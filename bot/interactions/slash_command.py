@@ -61,6 +61,7 @@ class SlashCommandInteraction:
         return cmd_name, kwargs
 
     async def run(self):
+        logger.info(f'{self.guild.name} | {self.channel.name} | {self.author.display_name} | /{self.name} {self.options}')
         if self.callback is None:
             logger.error(f'Recieved unknown slash command `/{self.name}`.')
             return

@@ -161,7 +161,11 @@ async def twitch_poll():
             "\nFROM `twitch_stat` WHERE `stream_id`=%s",
             (stream['stream_id'],)
         )
-        await db.update('twitch_streams', data={'is_live': False}, where={'stream_id': stream['stream_id']})
+        await db.update(
+            'twitch_streams',
+            data={'is_live': False, 'ended_at': int(time())},
+            where={'stream_id': stream['stream_id']}
+        )
         for guild in channel_to_guilds.get(stream['user_name']):
             await _post_stream_embed(
                 guild.cfg.twitch_announcement_channel or guild.id,

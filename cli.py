@@ -5,6 +5,7 @@ import logging
 import readline
 import rlcompleter  # this does python autocomplete by tab
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -52,6 +53,9 @@ class CLILoggingHandler(logging.Handler):
         line_buffer = readline.get_line_buffer()
         # save cursor position, erase line, write log lines, write user input, restore cursor position,
         sys.stdout.write("\033[s\r\n\033[F\033[K" + log_lines + '\r\n>' + line_buffer + "\033[u")
+
+    def format(self, record):
+        return datetime.now().strftime("%d.%m %H:%M:%S") + ' ' + super().format(record)
 
     def emit(self, record) -> None:
         if record.levelno in [logging.ERROR, logging.CRITICAL]:
