@@ -30,9 +30,9 @@
         <RouterLink :to="{name: 'admin-server', params: {section: 'Twitch'}}" class="entry" :class="{selected : section=='Twitch'}">
           <img src="/img/icons/admin/modules/twitch.png"/>Twitch
         </RouterLink>
-        <RouterLink :to="{name: 'admin-server', params: {section: 'YouTube'}}" class="entry" :class="{selected : section=='YouTube'}">
+        <!--<RouterLink :to="{name: 'admin-server', params: {section: 'YouTube'}}" class="entry" :class="{selected : section=='YouTube'}">
           <img src="/img/icons/admin/modules/yt.png"/>YouTube
-        </RouterLink>
+        </RouterLink>-->
       </div>
     </div>
     <div id="content-container">
