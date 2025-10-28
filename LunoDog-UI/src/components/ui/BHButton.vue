@@ -60,6 +60,11 @@ button:not([disabled]):hover {
   filter: brightness(115%);
 }
 
+button:not([disabled]):focus {
+  filter: brightness(115%);
+  outline: 3px solid var(--c-sf2);
+}
+
 button.large {
   padding: 18px 6px 18px 6px;
   min-width: 96px;

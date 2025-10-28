@@ -24,7 +24,7 @@
     <div class="content" v-if="editMode=='json'">
       <slot name="json"></slot>
       <div class="btn-container">
-        <BHButton text="Change" @click="$emit('setMode', 'table')"/>
+        <BHButton text="Change" class="save" @click="$emit('setMode', 'table')"/>
       </div>
     </div>
 
