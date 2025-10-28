@@ -85,7 +85,7 @@ class GuildConfig(Config):
         twitch_channels=ListVar(
             variables=dict(
                 channel=StrVar(notnull=True),
-                allowed_games=StrVar(default="*"),
+                allowed_games=StrVar(default="*", notnull=True),
                 message_text=StrVar()
             )
         ),

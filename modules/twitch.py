@@ -147,7 +147,7 @@ async def twitch_poll():
     channel_to_guilds = defaultdict(list)
     for g in bot.guilds.values():
         for i in g.cfg.twitch_channels:
-            channel_to_guilds[i['channel']].append(g)
+            channel_to_guilds[i['channel'].lower()].append(g)
 
     # Fetch data from twitch and local db
     live_streams = await _fetch_twitch_streams(*channel_to_guilds.keys())
@@ -166,7 +166,7 @@ async def twitch_poll():
             data={'is_live': False, 'ended_at': int(time())},
             where={'stream_id': stream['stream_id']}
         )
-        for guild in channel_to_guilds.get(stream['user_name']):
+        for guild in channel_to_guilds.get(stream['user_name'].lower()):
             await _post_stream_embed(
                 guild.cfg.twitch_announcement_channel or guild.id,
                 embed=_stream_summary_embed(stream, stream_stat)
@@ -186,10 +186,13 @@ async def twitch_poll():
 
         # Save and post announcements for new stream
         await db.insert('twitch_streams', stream)
-        for guild in channel_to_guilds.get(stream['user_name']):
-            config_row = find(lambda i: i['channel'] == stream['user_name'], guild.cfg.twitch_channels)
+        for guild in channel_to_guilds.get(stream['user_name'].lower()):
+            config_row = find(lambda i: i['channel'].lower() == stream['user_name'].lower(), guild.cfg.twitch_channels)
             if not config_row:  # config could have been updated during the data fetch
                 continue
+            if config_row['allowed_games'].strip() != '*':
+                if all((i.strip().lower() != stream['game_name'].lower() for i in config_row['allowed_games'].split(','))):
+                    continue
             await _post_stream_embed(
                 channel_id=guild.cfg.twitch_announcement_channel or guild.id,
                 content=config_row['message_text'] if len(config_row['message_text'] or '') else None,
